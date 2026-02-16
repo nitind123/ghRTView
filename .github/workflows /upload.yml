@@ -1,0 +1,28 @@
+name: upload
+
+on:
+  workflow_dispatch:
+    inputs:
+      id:
+        description: "run identifier"
+        required: false
+jobs:
+  upload:
+    name: "artifact-view-poc"
+    runs-on: self-hosted
+    steps:
+      - name: Setup
+        uses: jfrog/setup-jfrog-cli@v4
+        with:
+          version: 2.89.0
+        env:
+          JF_URL: ${{ secrets.JF_URL }}
+          JF_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN_2 }}
+          JFROG_CLI_LOG_LEVEL: DEBUG
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: deploy_artifact
+        run: |
+          jf --version
+          jf rt upload --server-id aview2 "jfrog_cli.go" go-2/go.mod --build-name $JFROG_CLI_BUILD_NAME --build-number $JFROG_CLI_BUILD_NUMBER --module "artifact-view-demo"
